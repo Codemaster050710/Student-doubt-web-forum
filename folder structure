@@ -1,0 +1,8 @@
+/my-website
+  ├── index.html        (Main homepage where users post doubts)
+  ├── styles.css        (All website styling)
+  ├── script.js         (JavaScript for interactive features)
+  ├── /pages            
+  │   ├── doubts.html   (Page to display posted doubts)
+  │   ├── about.html    (Optional about page)
+  ├── /images           (Folder for images, if needed)

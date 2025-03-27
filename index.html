@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post a Doubt</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Force login: if no currentUser, redirect to login.html
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+<body>
+  <header>
+    <p id="userDisplay"></p>
+  </header>
+
+  <div class="form-container full-width">
+    <h1>Post Your Doubt</h1>
+    <form id="doubtForm">
+      <div class="form-row">
+        <label for="subject">Subject:</label>
+        <select id="subject" name="subject">
+          <option value="math">Math</option>
+          <option value="physics">Physics</option>
+          <option value="chemistry">Chemistry</option>
+          <option value="biology">Biology</option>
+          <option value="sst">SST</option>
+          <option value="english">English</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="difficulty">Difficulty:</label>
+        <select id="difficulty" name="difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <input type="text" id="doubtInput" placeholder="Enter your doubt here..." required>
+      </div>
+      <div class="form-row">
+        <button type="submit">Submit Doubt</button>
+      </div>
+    </form>
+  </div>
+
+<footer>
+    <a href="pages/doubts.html" style="color: blue; text-decoration: underline; font-weight: bold;">View all Doubts</a>
+</footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+/my-website
+  ├── index.html       (Main webpage)
+  ├── styles.css       (For styling)
+  ├── script.js        (For JavaScript functions)
+  ├── /pages           (Folder for additional pages)
+  │   ├── about.html   (Another page)
+  ├── /images          (Folder for images)

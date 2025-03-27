@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2efe4;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    /* Navigation Bar */
+    .navbar {
+      background-color: #497AA6;
+      padding: 10px 0;
+      text-align: center;
+    }
+    .navbar ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .navbar ul li {
+      display: inline;
+      margin: 0 15px;
+    }
+    .navbar ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .navbar ul li a:hover {
+      text-decoration: underline;
+    }
+    /* Account Container */
+    .account-container {
+      background: white;
+      padding: 20px;
+      margin: 40px auto;
+      width: 60%;
+      border-radius: 8px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .account-container h1 {
+      color: #222;
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+    .account-container p {
+      font-size: 18px;
+      color: #0056b3;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .account-container button {
+      padding: 12px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .account-container button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul>
+      <li><a href="doubts.html">Doubts</a></li>
+      <li><a href="../About_us.html">About Us</a></li>
+      <li><a href="my_account.html">My Account</a></li>
+      <li><a href="my_doubts.html">My Doubts</a></li>
+    </ul>
+  </nav>
+
+  <!-- Account Section -->
+  <div class="account-container">
+    <h1>My Account</h1>
+    <p><strong>Username:</strong> <span id="username"></span></p>
+    <p><strong>Password:</strong> <span id="password"></span></p>
+    <button id="logoutButton">Logout</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  
+      if (!currentUser) {
+          console.log("No user found, redirecting to login...");
+          alert("You must log in first!");
+          window.location.href = "../login.html"; // Redirects properly from pages/
+          return;
+      }
+  
+      // Display user details
+      document.getElementById("username").textContent = currentUser.username;
+      document.getElementById("password").textContent = currentUser.password; // Not secure, just for testing
+  
+      // Logout functionality
+      document.getElementById("logoutButton").addEventListener("click", function() {
+          localStorage.removeItem("currentUser");
+          window.location.href = "../login.html"; // Ensures proper redirect after logout
+      });
+    });
+  </script>
+  
+  
+</body>
+</html>

@@ -1,0 +1,222 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2efe4;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Header */
+header, footer {
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #222;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+/* User Display */
+#userDisplay {
+    font-size: 18px;
+    color: #0056b3;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Form Containers */
+.form-container {
+    background: white;
+    padding: 20px;
+    margin: 20px auto;
+    width: 60%;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.full-width {
+    width: 90%;
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Buttons */
+button {
+    padding: 12px 20px;
+    background-color: #2760a5;
+    color: white;
+    border: none;
+    margin: 8px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #538fc4;
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+    margin: 20px 0;
+}
+
+.nav-buttons button {
+    background-color: #28a745;
+    padding: 10px 20px;
+}
+
+.nav-buttons button:hover {
+    background-color: #218838;
+}
+
+/* Doubt Container */
+.doubt-container {
+    width: 90%;
+    margin: 20px auto;
+    text-align: left;
+}
+
+/* Doubt Box */
+.doubt {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 50px; /* Add some margin to the bottom */
+    padding-bottom: 70px; /* Increase padding to ensure the button does not overlap */
+}
+
+.doubt-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.doubt-header p {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+.doubt-info {
+    font-size: 14px;
+    color: gray;
+}
+
+/* Answers Section */
+.answers-section {
+    background: #f4f4f4;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+.answer {
+    background: #e8f5e9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.no-answer {
+    color: gray;
+    font-style: italic;
+}
+
+/* Star Button */
+.star-btn {
+    background: none;
+    border: none;
+    font-size: 24px; /* Increased size for better visibility */
+    padding: 10px;   /* Larger clickable area */
+    cursor: pointer;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    color: gray; /* Default color */
+}
+
+.doubt {
+    position: relative;
+    padding-bottom: 70px; /* Increase padding to ensure the button does not overlap */
+}
+
+.starred {
+    color: gold;
+}
+
+/* Add this to your existing CSS */
+#starredDoubtsButton.active {
+  background-color: #27b868;
+  border: 2px solid #2234b55b;
+  outline: 2px solid #ffcc00; /* Add an outline when active */
+}
+
+/* Add this to your existing CSS */
+.view-answers-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px; /* Changed from left to right */
+    padding: 5px 10px;
+    background-color: #ffffff;
+    color: rgb(109, 161, 194);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+}
+/* Navigation Bar */
+.navbar {
+    background-color: #497AA6;
+    padding: 10px 0;
+    text-align: center;
+  }
+  
+  .navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .navbar ul li {
+    display: inline;
+    margin: 0 15px;
+  }
+  
+  .navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .navbar ul li a:hover {
+    text-decoration: underline;
+  }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container,
+    .doubt-container {
+        width: 95%;
+    }
+}

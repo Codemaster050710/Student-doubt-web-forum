@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>All Posted Doubts</title>
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    // Force login: if no currentUser, redirect to login.html
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+if (!currentUser) {
+    alert("Please log in first.");
+    return;
+}
+
+  </script>
+</head>
+<body>
+
+  <nav class="navbar">
+  <ul>
+    <li><a href="doubts.html">Doubts</a></li>
+    <li><a href="../About_us.html">About Us</a></li>
+    <li><a href="my_account.html">My Account</a></li>
+    <li><a href="my_doubts.html">My Doubts</a></li>
+  </ul>
+</nav>
+
+  
+  <header>
+    <h1>All Posted Doubts</h1>
+    <p id="userDisplay"></p>
+  </header>
+  <div class="nav-buttons"></div></div>
+    <button id="starredDoubtsButton" onclick="showStarredDoubts()">View Starred Doubts</button>
+  </div>
+  <style>
+    #starredDoubtsButton.active {
+      background-color: #27b868;
+      border: 2px solid #2234b55b;
+    }
+  </style>
+  <script>
+    function showStarredDoubts() {
+      const button = document.getElementById("starredDoubtsButton");
+      button.classList.toggle("active");
+      // Add your logic to show starred doubts here
+      // Assuming this function is defined in script.js
+    }
+  </script>
+  </script>
+
+  <div class="subject-filter">
+    <label for="subjectSelect">Select Subject:</label>
+    <select id="subjectSelect" onchange="filterDoubtsBySubject()">
+      <option value="all">All Subjects</option>
+      <option value="math">Math</option>
+      <option value="physics">Physics</option>
+      <option value="chemistry">Chemistry</option>
+      <option value="biology">Biology</option>
+      <option value="sst">Social Studies</option>
+      <option value="english">English</option>
+      <option value="tamil">Tamil</option>
+      <!-- Add more subjects as needed -->
+    </select>
+  </div>
+
+  <div id="doubtContainer" class="doubt-container"></div>
+
+  <footer>
+    <style>
+      .fixed-button {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+    </style>
+    <a href="../index.html" class="fixed-button">Add a Doubt</a>
+  </footer>
+
+  <script src="../script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (currentUser && document.getElementById("userDisplay")) {
+          document.getElementById("userDisplay").textContent = `Logged in as: ${currentUser.username} (${currentUser.role})`;
+      }
+      loadDoubts();
+    });
+
+    function filterDoubtsBySubject() {
+      const subject = document.getElementById("subjectSelect").value;
+      loadDoubts(subject);
+    }
+  </script>
+</body>
+</html>

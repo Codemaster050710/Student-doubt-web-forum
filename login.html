@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login / Signup</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>Welcome! Please Login or Sign Up</h1>
+    <!-- Signup Form -->
+    <div class="form-container" id="signupSection">
+      <h2>Sign Up</h2>
+      <input type="text" id="signupUsername" placeholder="Enter your name" required>
+      <select id="signupRole">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
+      <input type="password" id="signupPassword" placeholder="Enter password" required>
+      <button onclick="signupUser()">Sign Up</button>
+    </div>
+    <!-- Login Form -->
+    <div class="form-container" id="loginSection">
+      <h2>Login</h2>
+      <input type="text" id="loginUsername" placeholder="Enter your name" required>
+      <input type="password" id="loginPassword" placeholder="Enter password" required>
+      <button onclick="loginUser()">Login</button>
+    </div>
+  </div>
+
+  <script>
+    function signupUser() {
+      const username = document.getElementById("signupUsername").value.trim();
+      const role = document.getElementById("signupRole").value;
+      const password = document.getElementById("signupPassword").value;
+      if (!username || !password) {
+        alert("Please fill in all fields.");
+        return;
+      }
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+      if (users[username]) {
+        alert("Username already exists. Please choose a different one.");
+        return;
+      }
+      users[username] = { username, role, password };
+      localStorage.setItem("users", JSON.stringify(users));
+      // Automatically log in after signup
+      localStorage.setItem("currentUser", JSON.stringify(users[username]));
+      window.location.href = "pages/doubts.html"; // Redirect to homepage
+    }
+
+    function loginUser() {
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      let users = JSON.parse(localStorage.getItem("users")) || {};
+      if (!users[username] || users[username].password !== password) {
+        alert("Invalid username or password.");
+        return;
+      }
+      localStorage.setItem("currentUser", JSON.stringify(users[username]));
+      window.location.href = "pages/doubts.html"; // Redirect to doubts page
+    }
+  </script>
+</body>
+</html>
