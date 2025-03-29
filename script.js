@@ -63,8 +63,8 @@ async function postDoubt() {
 }
 
 
-// Function: Load and display all doubts (full view)
-async function loadDoubts(subject = 'all') {
+// Function: Load and display all doubts (with search and subject filtering)
+async function loadDoubts(subject = 'all', searchQuery = '') {
     let doubts = JSON.parse(localStorage.getItem("doubts")) || [];
     let currentUser = localStorage.getItem("currentUser"); // Get logged-in user
 
@@ -79,49 +79,60 @@ async function loadDoubts(subject = 'all') {
     const doubtContainer = document.getElementById("doubtContainer");
     doubtContainer.innerHTML = "";
 
+    // Filter doubts based on search query
+    if (searchQuery) {
+        doubts = doubts.filter(doubt => doubt.text.toLowerCase().includes(searchQuery));
+    }
+
+    // Filter doubts based on subject
     doubts = doubts.filter(doubt => subject === 'all' || doubt.subject === subject);
 
+    // Check if there are no doubts to display
     if (doubts.length === 0) {
-        doubtContainer.innerHTML = "<p class='no-doubts'>No doubts posted yet.</p>";
+        doubtContainer.innerHTML = "<p class='no-doubts'>No doubts match your search or filter criteria.</p>";
         return;
     }
 
+    // Loop through each doubt and create its HTML structure
     doubts.forEach((doubt, index) => {
-        if (subject === 'all' || doubt.subject === subject) {
-            let doubtElement = document.createElement("div");
-            doubtElement.classList.add("doubt");
-            doubtElement.id = "doubt" + index;
+        let doubtElement = document.createElement("div");
+        doubtElement.classList.add("doubt");
+        doubtElement.id = "doubt" + index;
 
-            let isStarred = starredDoubts.some(d => d.text === doubt.text); // Check if this doubt is starred
+        // Check if this doubt is starred
+        let isStarred = starredDoubts.some(d => d.text === doubt.text);
 
-            let answersHTML = doubt.answers.length 
-                ? doubt.answers.map(ans => `
-                    <div class="answer">
-                        <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
-                    </div>
-                `).join("")
-                : "<p class='no-answer'>No answers yet.</p>";
-
-            doubtElement.innerHTML = `
-                <div class="doubt-header">
-                    <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
-                    <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
-                    <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
-                    <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
-                    <p>${doubt.text}</p>
-                    <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar(${index})">
-                        ${isStarred ? '⭐' : '☆'}
-                    </button>
+        // Generate answers HTML
+        let answersHTML = doubt.answers.length 
+            ? doubt.answers.map(ans => `
+                <div class="answer">
+                    <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
                 </div>
-                <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
-                <button onclick="postAnswer(${index})">Post Answer</button>
-                <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
-                <div class="answers-section" id="answers-section-${index}" style="display: none;">
-                    ${answersHTML}
-                </div>
-            `;
-            doubtContainer.appendChild(doubtElement);
-        }
+            `).join("")
+            : "<p class='no-answer'>No answers yet.</p>";
+
+        // Set the inner HTML of the doubt element
+        doubtElement.innerHTML = `
+            <div class="doubt-header">
+                <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
+                <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
+                <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
+                <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
+                <p>${doubt.text}</p>
+                <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar(${index})">
+                    ${isStarred ? '⭐' : '☆'}
+                </button>
+            </div>
+            <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
+            <button onclick="postAnswer(${index})">Post Answer</button>
+            <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
+            <div class="answers-section" id="answers-section-${index}" style="display: none;">
+                ${answersHTML}
+            </div>
+        `;
+
+        // Append the doubt element to the container
+        doubtContainer.appendChild(doubtElement);
     });
 }
 
@@ -332,5 +343,10 @@ function toggleAnswers(index) {
     }
 }
 
+// Function: Search doubts based on the input query
+function searchDoubts() {
+    let searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
+    loadDoubts("all", searchQuery);
+}
 
 

@@ -2,7 +2,10 @@
   ├── index.html        (Main homepage where users post doubts)
   ├── styles.css        (All website styling)
   ├── script.js         (JavaScript for interactive features)
+  ├── login.html            (register or Login page)
+  ├── styles.css        (All website styling)
+  ├── About_us.html        (About us page)
   ├── /pages            
   │   ├── doubts.html   (Page to display posted doubts)
-  │   ├── about.html    (Optional about page)
-  ├── /images           (Folder for images, if needed)
+  │   ├── my_doubts.html     (Page to display doubts posted by user)
+  │   ├── my_account.html  (user details page)

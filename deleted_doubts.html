@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deleted Doubts</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+    
+        /* Container Styling */
+        .container {
+            width: 60%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease-in-out;
+        }
+    
+        .container:hover {
+            transform: scale(1.01);
+        }
+    
+        /* Deleted Doubts Styling */
+        .doubt-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: 0.3s ease-in-out;
+        }
+    
+        .doubt-container:hover {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    
+        .doubt-container h3 {
+            margin: 0 0 10px;
+            color: #333;
+            font-size: 20px;
+        }
+    
+        .doubt-container p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 16px;
+        }
+        
+        /* Doubt Text Container */
+        .doubt-text-container {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+    
+        /* Buttons */
+        .delete-btn, .restore-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            transition: 0.3s ease-in-out;
+        }
+    
+        .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+    
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+    
+        .restore-btn {
+            background-color: #2ecc71;
+            color: white;
+        }
+    
+        .restore-btn:hover {
+            background-color: #27ae60;
+        }
+    
+        /* Navigation Bar */
+        .navbar {
+            background-color: #2C3E50;
+            padding: 10px 0;
+            text-align: center;
+            border-radius: 5px;
+        }
+    
+        .navbar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+    
+        .navbar ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+    
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    
+        .navbar ul li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+</head>
+<body style="background-image: url('background.jpg'); background-size: cover; background-attachment: fixed; background-position: center;">
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <ul>
+            <li><a href="pages/doubts.html">Doubts</a></li>
+            <li><a href="About_us.html">About Us</a></li>
+            <li><a href="pages/my_account.html">My Account</a></li>
+            <li><a href="pages/my_doubts.html">My Doubts</a></li>
+            <li><a href="deleted_doubts.html">Deleted Doubts</a></li>
+        </ul>
+    </nav>
+
+    <h1>Deleted Doubts (Recycle Bin)</h1>
+    <div class="container" id="deletedDoubtsContainer"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let deletedDoubts = JSON.parse(localStorage.getItem("deletedDoubts")) || [];
+            let doubts = JSON.parse(localStorage.getItem("doubts")) || [];
+            let container = document.getElementById("deletedDoubtsContainer");
+
+            function loadDeletedDoubts() {
+                container.innerHTML = "";
+                if (deletedDoubts.length === 0) {
+                    container.innerHTML = "<p>No deleted doubts.</p>";
+                    return;
+                }
+
+                deletedDoubts = deletedDoubts.filter(doubt => {
+                    let deletionTime = doubt.deletedDate || 0;
+                    return new Date().getTime() - deletionTime < 2 * 24 * 60 * 60 * 1000; // 2 days limit
+                });
+
+                localStorage.setItem("deletedDoubts", JSON.stringify(deletedDoubts));
+
+             deletedDoubts.forEach((doubt, index) => {
+    let doubtElement = document.createElement("div");
+    doubtElement.classList.add("doubt-container");
+    doubtElement.innerHTML = `
+        <div class="doubt-text-container">
+            <h3>${doubt.text}</h3>
+        </div>
+        <p><strong>Subject:</strong> ${doubt.subject} | <strong>Difficulty:</strong> ${doubt.difficulty}</p>
+        <p><strong>Posted on:</strong> ${doubt.date || "Unknown"}</p>
+        <div class="button-container">
+            <button class="restore-btn" data-index="${index}">Restore</button>
+            <button class="delete-btn" data-index="${index}">Delete Permanently</button>
+        </div>
+    `;
+    container.appendChild(doubtElement);
+});
+
+            }
+
+            function restoreDoubt(index) {
+                let restoredDoubt = deletedDoubts.splice(index, 1)[0];
+                doubts.unshift(restoredDoubt);
+                localStorage.setItem("doubts", JSON.stringify(doubts));
+                localStorage.setItem("deletedDoubts", JSON.stringify(deletedDoubts));
+                alert("Doubt restored.");
+                loadDeletedDoubts();
+            }
+
+            function deletePermanently(index) {
+                deletedDoubts.splice(index, 1);
+                localStorage.setItem("deletedDoubts", JSON.stringify(deletedDoubts));
+                alert("Doubt deleted permanently.");
+                loadDeletedDoubts();
+            }
+
+            container.addEventListener("click", function (event) {
+                if (event.target.classList.contains("restore-btn")) {
+                    restoreDoubt(event.target.getAttribute("data-index"));
+                }
+                if (event.target.classList.contains("delete-btn")) {
+                    deletePermanently(event.target.getAttribute("data-index"));
+                }
+            });
+
+            loadDeletedDoubts();
+        });
+    </script>
+</body>
+</html>

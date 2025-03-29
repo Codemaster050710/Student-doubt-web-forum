@@ -1,10 +1,11 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2efe4;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
     margin: 0;
-    padding: 20px;
-    text-align: center;
+    padding: 0;
+    line-height: 1.6;
 }
 
 /* Header */
@@ -13,7 +14,8 @@ header, footer {
 }
 
 h1 {
-    color: #222;
+    text-align: center;
+    color: #2C3E50;
     font-size: 28px;
     margin-bottom: 10px;
 }
@@ -69,18 +71,30 @@ button:hover {
     background-color: #538fc4;
 }
 
-/* Navigation Buttons */
-.nav-buttons {
-    margin: 20px 0;
+/* Navigation Bar */
+.navbar {
+    background-color: #2C3E50;
+    padding: 15px 0;
+    text-align: center;
 }
-
-.nav-buttons button {
-    background-color: #28a745;
-    padding: 10px 20px;
+.navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
-
-.nav-buttons button:hover {
-    background-color: #218838;
+.navbar ul li {
+    display: inline;
+    margin: 0 15px;
+}
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+.navbar ul li a:hover {
+    color: #1ABC9C;
 }
 
 /* Doubt Container */
@@ -152,20 +166,15 @@ button:hover {
     color: gray; /* Default color */
 }
 
-.doubt {
-    position: relative;
-    padding-bottom: 70px; /* Increase padding to ensure the button does not overlap */
-}
-
 .starred {
     color: gold;
 }
 
 /* Add this to your existing CSS */
 #starredDoubtsButton.active {
-  background-color: #27b868;
-  border: 2px solid #2234b55b;
-  outline: 2px solid #ffcc00; /* Add an outline when active */
+    background-color: #27b868;
+    border: 2px solid #2234b55b;
+    outline: 2px solid #ffcc00; /* Add an outline when active */
 }
 
 /* Add this to your existing CSS */
@@ -174,49 +183,22 @@ button:hover {
     bottom: 10px;
     right: 10px; /* Changed from left to right */
     padding: 5px 10px;
-    background-color: #ffffff;
-    color: rgb(109, 161, 194);
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    margin-top: 10px;
     background-color: #007BFF;
     color: white;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
 }
-/* Navigation Bar */
-.navbar {
-    background-color: #497AA6;
-    padding: 10px 0;
-    text-align: center;
-  }
-  
-  .navbar ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .navbar ul li {
-    display: inline;
-    margin: 0 15px;
-  }
-  
-  .navbar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .navbar ul li a:hover {
-    text-decoration: underline;
-  }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .form-container,
     .doubt-container {
         width: 95%;
+    }
+    .navbar ul li {
+        display: block;
+        margin: 10px 0;
     }
 }
