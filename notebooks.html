@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notebooks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        header {
+            background: #497AA6; /* Updated */
+            padding: 20px;
+            color: white;
+            font-size: 26px;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-container {
+            background: white;
+            padding: 25px;
+            margin: 25px auto;
+            width: 50%;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type="text"] {
+            width: 85%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #497AA6; /* Updated */
+            outline: none;
+        }
+        
+        button {
+            padding: 12px 18px;
+            background: #497AA6; /* Updated */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            background: #3a5f85; /* Retain hover effect */
+        }
+        
+        .doubt-container {
+            width: 60%;
+            margin: 20px auto;
+            text-align: left;
+        }
+        
+        .doubt {
+            background: white;
+            border-left: 5px solid #497AA6; /* Updated */
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 8px;
+            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: 0.3s;
+        }
+        
+        .doubt:hover {
+            background: #f1f5f9;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .doubt-content {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+  <nav class="navbar" style="background: #497AA6; padding: 10px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; gap: 15px;">
+      <li><a href="doubts.html" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s;">Doubts</a></li>
+      <li><a href="../About_us.html" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s;">About Us</a></li>
+      <li><a href="my_account.html" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s;">My Account</a></li>
+      <li><a href="my_doubts.html" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s;">My Doubts</a></li>
+      <li><a href="notebooks.html" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.3s;">Notebooks</a></li>
+    </ul>
+  </nav>
+  </nav>
+  <header>
+    Manage Your Notebooks
+    </header>
+
+        
+      </ul>
+    </nav>
+    <div class="form-container">
+        <input type="text" id="notebookName" placeholder="Enter Notebook Name">
+        <button onclick="createNotebook()">Create Notebook</button>
+    </div>
+    
+    <div class="doubt-container">
+        <ul id="notebookList" style="list-style-type: none; padding: 0;"></ul>
+    </div>
+    
+    <script>
+document.addEventListener("DOMContentLoaded", loadNotebooks);
+
+function createNotebook() {
+    let notebookName = document.getElementById("notebookName").value.trim();
+    if (notebookName === "") {
+        alert("Notebook name cannot be empty!");
+        return;
+    }
+
+    // Get the stored notebooks array or initialize an empty one
+    let notebooks = JSON.parse(localStorage.getItem("notebooks") || "[]");
+
+    // Ensure notebooks is a valid array
+    if (!Array.isArray(notebooks)) {
+        notebooks = [];
+    }
+
+    // Prevent duplicate names
+    if (notebooks.includes(notebookName)) {
+        alert("Notebook with this name already exists!");
+        return;
+    }
+
+    // Add new notebook name to the array
+    notebooks.push(notebookName);
+    localStorage.setItem("notebooks", JSON.stringify(notebooks)); // Save to localStorage
+
+    // Add notebook to UI
+    addNotebookToUI(notebookName);
+
+    document.getElementById("notebookName").value = "";
+}
+
+function addNotebookToUI(notebookName) {
+    let notebookList = document.getElementById("notebookList");
+    let li = document.createElement("li");
+    li.className = "doubt";
+
+    let title = document.createElement("span");
+    title.textContent = notebookName;
+    li.appendChild(title);
+
+    let buttonContainer = document.createElement("div");
+    buttonContainer.className = "nav-buttons";
+
+    let renameButton = document.createElement("button");
+    renameButton.textContent = "Rename";
+    renameButton.onclick = function() {
+        let newName = prompt("Enter new notebook name:", notebookName);
+        if (newName && newName.trim() !== "") {
+            title.textContent = newName;
+
+            // Update localStorage
+            let notebooks = JSON.parse(localStorage.getItem("notebooks") || "[]");
+            let index = notebooks.indexOf(notebookName);
+            if (index !== -1) {
+                notebooks[index] = newName;
+                localStorage.setItem("notebooks", JSON.stringify(notebooks));
+            }
+            notebookName = newName;
+        }
+    };
+
+    let deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.onclick = function() {
+        notebookList.removeChild(li);
+
+        // Remove from localStorage
+        let notebooks = JSON.parse(localStorage.getItem("notebooks") || "[]");
+        notebooks = notebooks.filter(name => name !== notebookName);
+        localStorage.setItem("notebooks", JSON.stringify(notebooks));
+
+        // Remove localStorage entry if no notebooks are left
+        if (notebooks.length === 0) {
+            localStorage.removeItem("notebooks");
+        }
+    };
+
+    let addDoubtButton = document.createElement("button");
+    addDoubtButton.textContent = "Add Doubt";
+    addDoubtButton.onclick = function() {
+        localStorage.setItem("currentNotebook", notebookName);
+        window.location.href = "doubts.html";
+    };
+
+    let viewDoubtsButton = document.createElement("button");
+    viewDoubtsButton.textContent = "View Doubts";
+
+    let doubtContent = document.createElement("div");
+    doubtContent.className = "doubt-content";
+    doubtContent.textContent = "No doubts added yet.";
+
+    viewDoubtsButton.onclick = function() {
+        doubtContent.style.display = doubtContent.style.display === "none" ? "block" : "none";
+    };
+
+    buttonContainer.appendChild(renameButton);
+    buttonContainer.appendChild(deleteButton);
+    buttonContainer.appendChild(viewDoubtsButton);
+    buttonContainer.appendChild(addDoubtButton);
+    li.appendChild(buttonContainer);
+    li.appendChild(doubtContent);
+    notebookList.appendChild(li);
+}
+
+function loadNotebooks() {
+    let notebooks = JSON.parse(localStorage.getItem("notebooks") || "[]");
+
+    // **[Fix]: Prevent `object Object` issue**
+    if (!Array.isArray(notebooks)) {
+        console.warn("Corrupted notebook data detected. Resetting storage.");
+        localStorage.removeItem("notebooks");
+        return;
+    }
+
+    notebooks.forEach(notebook => {
+        addNotebookToUI(notebook);
+    });
+}
+
+    </script>
+</body>
+</html>
