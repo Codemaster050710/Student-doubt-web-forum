@@ -8,14 +8,14 @@
     /* General Styles */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f2efe4;
+      background-color:  #f4f4f4;
       margin: 0;
       padding: 20px;
       text-align: center;
     }
     /* Navigation Bar */
     .navbar {
-      background-color: #497AA6;
+      background-color:  #2C3E50;
       padding: 10px 0;
       text-align: center;
     }
@@ -35,7 +35,7 @@
       font-weight: bold;
     }
     .navbar ul li a:hover {
-      text-decoration: underline;
+      color:aquamarine;
     }
     /* Account Container */
     .account-container {
@@ -46,17 +46,29 @@
       border-radius: 8px;
       box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
       text-align: center;
+      border: #000000;
+      border-radius: 10px;
     }
     .account-container h1 {
-      color: #222;
-      font-size: 28px;
-      margin-bottom: 15px;
+      color: #2C3E50;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
     }
+      
+    
     .account-container p {
       font-size: 18px;
-      color: #0056b3;
+      color: #102c4a;
       margin-bottom: 10px;
       font-weight: bold;
+      padding: 10px;
+      border: 2px solid #114f91;
+      border-radius: 5px;
+      background-color: #edf0f2;
+      display: inline-block;
     }
     .account-container button {
       padding: 12px 20px;
@@ -80,6 +92,7 @@
       <li><a href="../About_us.html">About Us</a></li>
       <li><a href="my_account.html">My Account</a></li>
       <li><a href="my_doubts.html">My Doubts</a></li>
+      <li><a href="../deleted_doubts.html">Deleted Doubts</a></li>
     </ul>
   </nav>
 
@@ -92,6 +105,7 @@
   </div>
 
   <script>
+    
     document.addEventListener("DOMContentLoaded", function() {
       let currentUser = JSON.parse(localStorage.getItem("currentUser"));
   
