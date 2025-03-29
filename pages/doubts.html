@@ -8,10 +8,11 @@
   <script>
     // Force login: if no currentUser, redirect to login.html
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-if (!currentUser) {
-    alert("Please log in first.");
-    return;
-}
+    if (!currentUser) {
+      alert("Please log in first.");
+      window.location.href = "../login.html";
+    }
+  </script>
 
   </script>
 </head>
@@ -23,6 +24,7 @@ if (!currentUser) {
     <li><a href="../About_us.html">About Us</a></li>
     <li><a href="my_account.html">My Account</a></li>
     <li><a href="my_doubts.html">My Doubts</a></li>
+    <li><a href="../deleted_doubts.html">Deleted Doubts</a></li>
   </ul>
 </nav>
 
@@ -50,8 +52,14 @@ if (!currentUser) {
   </script>
   </script>
 
+  <div class="search-container" style="display: flex; align-items: center; gap: 5px; margin-top: 20px;"></div>
+    <input type="text" id="searchInput" placeholder="Search doubts...">
+    <button onclick="searchDoubts()">Search in all posted doubts</button>
+  </div>
+
+
   <div class="subject-filter">
-    <label for="subjectSelect">Select Subject:</label>
+    <label for="subjectSelect" style="display: block; text-align: left;">Select Subject:</label>
     <select id="subjectSelect" onchange="filterDoubtsBySubject()">
       <option value="all">All Subjects</option>
       <option value="math">Math</option>
