@@ -62,20 +62,20 @@ async function postDoubt() {
     loadDoubts();  // Refresh the doubts list
 }
 
-
 // Function: Load and display all doubts (with search and subject filtering)
-async function loadDoubts(subject = 'all', searchQuery = '') {
+function loadDoubts(subject = 'all', searchQuery = '') {
     let doubts = JSON.parse(localStorage.getItem("doubts")) || [];
-    let currentUser = localStorage.getItem("currentUser"); // Get logged-in user
+    let currentUser = JSON.parse(localStorage.getItem("currentUser")); // Get logged-in user
 
     if (!currentUser) {
         alert("Please log in first.");
         return;
     }
 
-    let userStarredKey = `starredDoubts_${currentUser}`; // Unique key per user
+    let userStarredKey = `starredDoubts_${currentUser.username}`; // Unique key per user
     let starredDoubts = JSON.parse(localStorage.getItem(userStarredKey)) || [];
-
+    let notebooks = JSON.parse(localStorage.getItem("notebooks")) || []; // Fetch notebooks
+    console.log("Available Notebooks:", notebooks);
     const doubtContainer = document.getElementById("doubtContainer");
     doubtContainer.innerHTML = "";
 
@@ -111,29 +111,78 @@ async function loadDoubts(subject = 'all', searchQuery = '') {
             `).join("")
             : "<p class='no-answer'>No answers yet.</p>";
 
+        // Generate notebook dropdown options dynamically from localStorage
+        let notebookDropdownHTML = `<select class="notebookDropdown" id="notebookDropdown${index}">`;
+        if (notebooks.length === 0) {
+            notebookDropdownHTML += `<option value="">No Notebooks Found</option>`;
+        } else {
+            notebookDropdownHTML += `<option value="">Select Notebook</option>`;
+            notebooks.forEach(notebook => {
+                notebookDropdownHTML += `<option value="${notebook}">${notebook}</option>`;
+            });
+        }
+        notebookDropdownHTML += `</select>`;
+
         // Set the inner HTML of the doubt element
         doubtElement.innerHTML = `
-            <div class="doubt-header">
-                <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
-                <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
-                <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
-                <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
-                <p>${doubt.text}</p>
-                <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar(${index})">
-                    ${isStarred ? '⭐' : '☆'}
-                </button>
-            </div>
-            <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
-            <button onclick="postAnswer(${index})">Post Answer</button>
-            <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
-            <div class="answers-section" id="answers-section-${index}" style="display: none;">
-                ${answersHTML}
-            </div>
-        `;
+        <div class="doubt-header">
+            <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
+            <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
+            <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
+            <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
+            <p>${doubt.text}</p>
+            <button class="star-btn ${isStarred ? 'starred' : ''}" onclick="toggleStar(${index})">
+                ${isStarred ? '⭐' : '☆'}
+            </button>
+        </div>
+        <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
+        <button onclick="postAnswer(${index})">Post Answer</button>
+        <button onclick="saveDoubtToNotebook('${doubt.text}')">
+    Save to Notebook
+</button>
 
+        <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
+        <div class="answers-section" id="answers-section-${index}" style="display: none;">
+            
+
+            ${answersHTML}
+        </div>
+        ${notebookDropdownHTML}
+    `;
+    
+
+        
         // Append the doubt element to the container
         doubtContainer.appendChild(doubtElement);
     });
+}
+
+// Function: Save doubt to selected notebook
+function saveDoubtToNotebook(button) {
+    // Traverse up the DOM to find the parent element containing the doubt text
+    let doubtElement = button.closest(".doubt"); // Find the closest parent with the class "doubt"
+    if (!doubtElement) {
+        alert("Error: Could not find the doubt element.");
+        return;
+    }
+
+    let doubtText = doubtElement.querySelector("p").textContent; // Find the <p> tag inside the doubt element
+    let selectedNotebook = button.previousElementSibling.value; // Assuming the dropdown is before the button
+
+    if (!selectedNotebook) {
+        alert("Please select a notebook!");
+        return;
+    }
+
+    let notebookDoubts = JSON.parse(localStorage.getItem("saveddoubts")) || {};
+    if (!notebookDoubts[selectedNotebook]) {
+        notebookDoubts[selectedNotebook] = [];
+    }
+
+    notebookDoubts[selectedNotebook].push(doubtText);
+    localStorage.setItem("saveddoubts", JSON.stringify(notebookDoubts));
+
+    alert(`Doubt saved to notebook: ${selectedNotebook}`);
 }
 
 // Function: Post an answer to a specific doubt without reloading entire list
@@ -171,61 +220,59 @@ function postAnswer(index) {
     loadDoubts();
 }
 
-
 // Function: Set view to starred and display only starred doubts
 function showStarredDoubts() {
-        let currentUser = localStorage.getItem("currentUser"); // Get logged-in user
-    
-        if (!currentUser) {
-            alert("Please log in first.");
-            return;
-        }
-    
-        let userStarredKey = `starredDoubts_${currentUser}`; // Unique key for each user
-        let starredDoubts = JSON.parse(localStorage.getItem(userStarredKey)) || [];
-    
-        const doubtContainer = document.getElementById("doubtContainer");
-        doubtContainer.innerHTML = "";
-    
-        if (starredDoubts.length === 0) {
-            doubtContainer.innerHTML = "<p class='no-doubts'>No starred doubts yet.</p>";
-            return;
-        }
-    
-        starredDoubts.forEach((doubt, index) => {
-            let doubtElement = document.createElement("div");
-            doubtElement.classList.add("doubt");
-    
-            let answersHTML = doubt.answers.length 
-                ? doubt.answers.map(ans => `
-                    <div class="answer">
-                        <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
-                    </div>
-                `).join("")
-                : "<p class='no-answer'>No answers yet.</p>";
-    
-            doubtElement.innerHTML = `
-                <div class="doubt-header">
-                    <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
-                    <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
-                    <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
-                    <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
-                    <p>${doubt.text}</p>
-                    <button class="star-btn starred" onclick="toggleStar(${index})">
-                        ⭐
-                    </button>
-                </div>
-                <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
-                <button onclick="postAnswer(${index})">Post Answer</button>
-                <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
-                <div class="answers-section" id="answers-section-${index}" style="display: none;">
-                    ${answersHTML}
-                </div>
-            `;
-            doubtContainer.appendChild(doubtElement);
-        });
+    let currentUser = localStorage.getItem("currentUser"); // Get logged-in user
+
+    if (!currentUser) {
+        alert("Please log in first.");
+        return;
     }
-    
+
+    let userStarredKey = `starredDoubts_${currentUser}`; // Unique key for each user
+    let starredDoubts = JSON.parse(localStorage.getItem(userStarredKey)) || [];
+
+    const doubtContainer = document.getElementById("doubtContainer");
+    doubtContainer.innerHTML = "";
+
+    if (starredDoubts.length === 0) {
+        doubtContainer.innerHTML = "<p class='no-doubts'>No starred doubts yet.</p>";
+        return;
+    }
+
+    starredDoubts.forEach((doubt, index) => {
+        let doubtElement = document.createElement("div");
+        doubtElement.classList.add("doubt");
+
+        let answersHTML = doubt.answers.length 
+            ? doubt.answers.map(ans => `
+            <div class="answer">
+                <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
+            </div>
+            `).join("")
+            : "<p class='no-answer'>No answers yet.</p>";
+
+        doubtElement.innerHTML = `
+            <div class="doubt-header">
+            <p><strong>Asked by: ${doubt.username}</strong> (${doubt.role})</p>
+            <p class="doubt-info">Posted on: ${doubt.date || "Unknown"}</p>
+            <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
+            <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
+            <p>${doubt.text}</p>
+            <button class="star-btn starred" onclick="toggleStar(${index})">
+                ⭐
+            </button>
+            </div>
+            <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
+            <button onclick="postAnswer(${index})">Post Answer</button>
+            <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
+            <div class="answers-section" id="answers-section-${index}" style="display: none;">
+            ${answersHTML}
+            </div>
+        `;
+        doubtContainer.appendChild(doubtElement);
+    });
+}
 
 // Function: Set view to all and load all doubts
 function showAllDoubts() {
@@ -249,9 +296,9 @@ function displayFilteredDoubts(doubts, indices) {
 
         let answersHTML = doubt.answers.length 
             ? doubt.answers.map(ans => `
-                <div class="answer">
-                    <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
-                </div>`).join("")
+            <div class="answer">
+                <p><strong>Answered by: ${ans.username}</strong> (${ans.role}): ${ans.text}</p>
+            </div>`).join("")
             : "<p class='no-answer'>No answers yet.</p>";
 
         doubtElement.innerHTML = `
@@ -293,41 +340,121 @@ function toggleStar(index) {
     }
 }
 
-
 // Helper: Capitalize the first letter of a string
 function capitalizeFirstLetter(str) {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Function: Toggle the visibility of the answers section
-function toggleStar(index) {
-    let doubts = JSON.parse(localStorage.getItem("doubts")) || [];
-    let currentUser = localStorage.getItem("currentUser"); // Get the logged-in user
-    
-    if (!currentUser) {
-        alert("Please log in to star doubts.");
+// Function : populating dropdowns in doubts 
+function populateDropdowns() {
+    let storedNotebooks = JSON.parse(localStorage.getItem("notebooks")) || [];
+    let dropdowns = document.querySelectorAll(".notebookDropdown");
+
+    dropdowns.forEach(dropdown => {
+        dropdown.innerHTML = '<option value="">Select Notebook</option>'; // Reset options
+        storedNotebooks.forEach(notebook => {
+            let option = document.createElement("option");
+            option.value = notebook;
+            option.textContent = notebook;
+            dropdown.appendChild(option);
+        });
+    });
+}
+
+// Saving doubts in local storage 
+document.addEventListener("DOMContentLoaded", populateDropdowns);
+
+// Function : adding dropdowns to doubts  
+function addDropdownToDoubts() {
+    let storedNotebooks = JSON.parse(localStorage.getItem("notebooks")) || [];
+    let doubts = document.querySelectorAll(".doubt-container"); // Ensure each doubt gets a dropdown
+
+    doubts.forEach(doubt => {
+        let dropdown = document.createElement("select");
+        dropdown.classList.add("notebookDropdown");
+
+        // Default option
+        let defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "Choose Notebook";
+        dropdown.appendChild(defaultOption);
+
+        // Populate dropdown
+        storedNotebooks.forEach(notebook => {
+            let option = document.createElement("option");
+            option.value = notebook;
+            option.textContent = notebook;
+            dropdown.appendChild(option);
+        });
+
+        // Create a save button
+        let saveButton = document.createElement("button");
+        saveButton.textContent = "Save to Notebook";
+        saveButton.onclick = function() {
+            assignDoubtToNotebook(doubt, dropdown.value);
+        };
+
+        // Append dropdown and button inside each doubt
+        doubt.appendChild(dropdown);
+        doubt.appendChild(saveButton);
+    });
+}
+
+// Function : assign doubts to notebooks 
+function assignDoubtToNotebook(doubtElement, selectedNotebook) {
+    if (!selectedNotebook) {
+        alert("Please select a notebook!");
         return;
     }
 
-    let userStarredKey = `starredDoubts_${currentUser}`; // Unique key per user
-    let starredDoubts = JSON.parse(localStorage.getItem(userStarredKey)) || [];
+    let doubtText = doubtElement.querySelector("p").textContent;
+    let savedDoubts = JSON.parse(localStorage.getItem("savedDoubts")) || {};
 
-    let doubt = doubts[index];
-
-    // Check if the doubt is already starred
-    let starIndex = starredDoubts.findIndex(d => d.text === doubt.text);
-    if (starIndex !== -1) {
-        // If already starred, remove it
-        starredDoubts.splice(starIndex, 1);
-    } else {
-        // Otherwise, add it
-        starredDoubts.push(doubt);
+    // If the notebook doesn't exist in savedDoubts, create an array
+    if (!savedDoubts[selectedNotebook]) {
+        savedDoubts[selectedNotebook] = [];
     }
 
-    localStorage.setItem(userStarredKey, JSON.stringify(starredDoubts)); // Save user-specific starred doubts
-    loadDoubts(); // Refresh doubts to update star status
+    savedDoubts[selectedNotebook].push(doubtText);
+    localStorage.setItem("savedDoubts", JSON.stringify(savedDoubts));
+
+    alert(`Doubt saved to notebook: ${selectedNotebook}`);
+    alert("Doubt saved successfully to notebook: " + selectedNotebook);
 }
+
+// Function : fetch and display saved doubts : 
+function fetchAndDisplaySavedDoubts() {
+    let savedDoubts = JSON.parse(localStorage.getItem("savedDoubts")) || {};
+    let notebooksContainer = document.getElementById("notebooksContainer"); // Ensure this div exists in notebooks.html
+    notebooksContainer.innerHTML = ""; // Clear previous content
+
+    Object.keys(savedDoubts).forEach(notebook => {
+        let notebookDiv = document.createElement("div");
+        notebookDiv.classList.add("notebook-section");
+
+        let title = document.createElement("h3");
+        title.textContent = notebook;
+        notebookDiv.appendChild(title);
+
+        let doubtsList = document.createElement("ul");
+        savedDoubts[notebook].forEach(doubt => {
+            let listItem = document.createElement("li");
+            listItem.textContent = doubt;
+            doubtsList.appendChild(listItem);
+        });
+
+        notebookDiv.appendChild(doubtsList);
+        notebooksContainer.appendChild(notebookDiv);
+    });
+}
+
+// Ensure doubts are displayed when the notebooks page loads
+document.addEventListener("DOMContentLoaded", function() {
+    if (document.getElementById("notebooksContainer")) {
+        fetchAndDisplaySavedDoubts();
+    }
+});
 
 // Function: Toggle the visibility of the answers section
 function toggleAnswers(index) {
@@ -348,5 +475,4 @@ function searchDoubts() {
     let searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
     loadDoubts("all", searchQuery);
 }
-
 
