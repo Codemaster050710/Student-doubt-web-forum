@@ -1,104 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="../styles.css"> <!-- Corrected path -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notebooks</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #f8f9fa, #e9ecef);
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        header {
-            background: #497AA6; /* Updated */
-            padding: 20px;
-            color: white;
-            font-size: 26px;
-            font-weight: 600;
-            border-radius: 12px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .form-container {
-            background: white;
-            padding: 25px;
-            margin: 25px auto;
-            width: 50%;
-            border-radius: 12px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        input[type="text"] {
-            width: 85%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: 0.3s;
-        }
-        
-        input[type="text"]:focus {
-            border-color: #497AA6; /* Updated */
-            outline: none;
-        }
-        
-        button {
-            padding: 12px 18px;
-            background: #497AA6; /* Updated */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        
-        button:hover {
-            background: #3a5f85; /* Retain hover effect */
-        }
-        
-        .doubt-container {
-            width: 60%;
-            margin: 20px auto;
-            text-align: left;
-        }
-        
-        .doubt {
-            background: white;
-            border-left: 5px solid #497AA6; /* Updated */
-            padding: 15px;
-            margin: 12px 0;
-            border-radius: 8px;
-            box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            transition: 0.3s;
-        }
-        
-        .doubt:hover {
-            background: #f1f5f9;
-        }
-        
-        .nav-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .doubt-content {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-    </style>
 </head>
 <body>
   <nav class="navbar" style="background: #497AA6; padding: 10px; border-radius: 8px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
@@ -211,7 +119,7 @@ function addNotebookToUI(notebookName) {
     addDoubtButton.textContent = "Add Doubt";
     addDoubtButton.onclick = function() {
         localStorage.setItem("currentNotebook", notebookName);
-        window.location.href = "doubts.html";
+        window.location.href = "pages/doubts.html";
     };
 
     let viewDoubtsButton = document.createElement("button");
@@ -222,6 +130,28 @@ function addNotebookToUI(notebookName) {
     doubtContent.textContent = "No doubts added yet.";
 
     viewDoubtsButton.onclick = function() {
+        let notebookDoubts = JSON.parse(localStorage.getItem("notebookData") || "{}");
+        let doubts = notebookDoubts[notebookName] || [];
+
+        doubtContent.innerHTML = ""; // Clear previous doubts
+
+        if (doubts.length === 0) {
+            doubtContent.innerHTML = "<p>No doubts added yet.</p>";
+        } else {
+            doubts.forEach(doubt => {
+                let doubtElement = document.createElement("div");
+                doubtElement.classList.add("doubt");
+                doubtElement.innerHTML = `
+                    <p><strong>Asked by:</strong> ${doubt.username} (${doubt.role})</p>
+                    <p><strong>Subject:</strong> ${doubt.subject}</p>
+                    <p><strong>Difficulty:</strong> ${doubt.difficulty}</p>
+                    <p>${doubt.text}</p>
+                `;
+                doubtContent.appendChild(doubtElement);
+            });
+        }
+
+        // Toggle visibility
         doubtContent.style.display = doubtContent.style.display === "none" ? "block" : "none";
     };
 
@@ -232,6 +162,35 @@ function addNotebookToUI(notebookName) {
     li.appendChild(buttonContainer);
     li.appendChild(doubtContent);
     notebookList.appendChild(li);
+}
+
+// Function to load doubts  for each notebook
+function loadNotebookDoubts(notebookName) {
+    let notebooksData = JSON.parse(localStorage.getItem("notebookData")) || {};
+
+    // Get doubts for the selected notebook
+    let notebookDoubts = notebooksData[notebookName] || [];
+    
+    let notebookDoubtContainer = document.getElementById("notebookDoubtContainer");
+    notebookDoubtContainer.innerHTML = ""; // Clear previous doubts
+
+    if (notebookDoubts.length === 0) {
+        notebookDoubtContainer.innerHTML = "<p>No doubts saved in this notebook.</p>";
+        return;
+    }
+
+    // Display doubts
+    notebookDoubts.forEach((doubt, index) => {
+        let doubtElement = document.createElement("div");
+        doubtElement.classList.add("doubt");
+        doubtElement.innerHTML = `
+            <p><strong>Asked by:</strong> ${doubt.username} (${doubt.role})</p>
+            <p><strong>Subject:</strong> ${capitalizeFirstLetter(doubt.subject)}</p>
+            <p><strong>Difficulty:</strong> ${capitalizeFirstLetter(doubt.difficulty)}</p>
+            <p>${doubt.text}</p>
+        `;
+        notebookDoubtContainer.appendChild(doubtElement);
+    });
 }
 
 function loadNotebooks() {
