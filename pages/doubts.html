@@ -8,11 +8,10 @@
   <script>
     // Force login: if no currentUser, redirect to login.html
     let currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (!currentUser) {
-      alert("Please log in first.");
-      window.location.href = "../login.html";
-    }
-  </script>
+if (!currentUser) {
+    alert("Please log in first.");
+    return;
+}
 
   </script>
 </head>
@@ -24,7 +23,7 @@
     <li><a href="../About_us.html">About Us</a></li>
     <li><a href="my_account.html">My Account</a></li>
     <li><a href="my_doubts.html">My Doubts</a></li>
-    <li><a href="../deleted_doubts.html">Deleted Doubts</a></li>
+    <li><a href="notebooks.html" >Notebooks</a></li>
   </ul>
 </nav>
 
@@ -35,7 +34,9 @@
   </header>
   <div class="nav-buttons"></div></div>
     <button id="starredDoubtsButton" onclick="showStarredDoubts()">View Starred Doubts</button>
-  </div>
+  
+   
+  
   <style>
     #starredDoubtsButton.active {
       background-color: #27b868;
@@ -50,16 +51,47 @@
       // Assuming this function is defined in script.js
     }
   </script>
+  <script>
+  // Function to populate dropdown with stored notebooks
+function populateDropdowns() {
+    let storedNotebooks = JSON.parse(localStorage.getItem("notebooks")) || [];
+    let dropdowns = document.querySelectorAll(".notebookDropdown");
+
+    dropdowns.forEach(dropdown => {
+        dropdown.innerHTML = '<option value="">Select Notebook</option>'; // Reset options
+        storedNotebooks.forEach(notebook => {
+            let option = document.createElement("option");
+            option.value = notebook;
+            option.textContent = notebook;
+            dropdown.appendChild(option);
+        });
+    });
+}
+
+// Function to assign doubt to a selected notebook
+function assignDoubt(button) {
+    let doubtText = button.parentElement.querySelector("p").textContent;
+    let selectedNotebook = button.previousElementSibling.value;
+
+    if (!selectedNotebook) {
+        alert("Please select a notebook!");
+        return;
+    }
+
+    let notebookDoubts = JSON.parse(localStorage.getItem(selectedNotebook)) || [];
+    notebookDoubts.push(doubtText);
+    localStorage.setItem(selectedNotebook, JSON.stringify(notebookDoubts));
+
+    alert(`Doubt added to notebook: ${selectedNotebook}`);
+}
+
+// Load dropdowns on page load
+document.addEventListener("DOMContentLoaded", populateDropdowns);
+</script>
   </script>
 
-  <div class="search-container" style="display: flex; align-items: center; gap: 5px; margin-top: 20px;"></div>
-    <input type="text" id="searchInput" placeholder="Search doubts...">
-    <button onclick="searchDoubts()">Search in all posted doubts</button>
-  </div>
-
-
   <div class="subject-filter">
-    <label for="subjectSelect" style="display: block; text-align: left;">Select Subject:</label>
+    <label for="subjectSelect">Select Subject:</label>
     <select id="subjectSelect" onchange="filterDoubtsBySubject()">
       <option value="all">All Subjects</option>
       <option value="math">Math</option>
@@ -74,6 +106,10 @@
   </div>
 
   <div id="doubtContainer" class="doubt-container"></div>
+</div>
+<select  class="doubt-container" id="notebookSelect" onchange="populateDropdowns()">
+  <option value="">Select Notebook</option>
+</select>
 
   <footer>
     <style>
