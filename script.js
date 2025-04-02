@@ -65,14 +65,14 @@ async function postDoubt() {
 // Function: Load and display all doubts (with search and subject filtering)
 function loadDoubts(subject = 'all', searchQuery = '') {
     let doubts = JSON.parse(localStorage.getItem("doubts")) || [];
-    let currentUser = JSON.parse(localStorage.getItem("currentUser")); // Get logged-in user
+    let currentUser = localStorage.getItem("currentUser"); // Get logged-in user
 
     if (!currentUser) {
         alert("Please log in first.");
         return;
     }
 
-    let userStarredKey = `starredDoubts_${currentUser.username}`; // Unique key per user
+    let userStarredKey = `starredDoubts_${currentUser}`; // Unique key per user
     let starredDoubts = JSON.parse(localStorage.getItem(userStarredKey)) || [];
     let notebooks = JSON.parse(localStorage.getItem("notebooks")) || []; // Fetch notebooks
     console.log("Available Notebooks:", notebooks);
@@ -116,7 +116,7 @@ function loadDoubts(subject = 'all', searchQuery = '') {
         if (notebooks.length === 0) {
             notebookDropdownHTML += `<option value="">No Notebooks Found</option>`;
         } else {
-            notebookDropdownHTML += `<option value="">Select Notebook</option>`;
+            notebookDropdownHTML += `<option value="">Add to Notebook</option>`;
             notebooks.forEach(notebook => {
                 notebookDropdownHTML += `<option value="${notebook}">${notebook}</option>`;
             });
@@ -137,14 +137,9 @@ function loadDoubts(subject = 'all', searchQuery = '') {
         </div>
         <textarea id="answer${index}" placeholder="Write your answer..."></textarea>
         <button onclick="postAnswer(${index})">Post Answer</button>
-        <button onclick="saveDoubtToNotebook('${doubt.text}')">
-    Save to Notebook
-</button>
-
+        <button onclick="saveDoubtToNotebook(this)">Save to Notebook</button>
         <button class="view-answers-btn" onclick="toggleAnswers(${index})">View Answers</button>
         <div class="answers-section" id="answers-section-${index}" style="display: none;">
-            
-
             ${answersHTML}
         </div>
         ${notebookDropdownHTML}
@@ -159,28 +154,37 @@ function loadDoubts(subject = 'all', searchQuery = '') {
 
 // Function: Save doubt to selected notebook
 function saveDoubtToNotebook(button) {
-    // Traverse up the DOM to find the parent element containing the doubt text
+    // Find the parent element containing the doubt text
     let doubtElement = button.closest(".doubt"); // Find the closest parent with the class "doubt"
     if (!doubtElement) {
         alert("Error: Could not find the doubt element.");
         return;
     }
 
-    let doubtText = doubtElement.querySelector("p").textContent; // Find the <p> tag inside the doubt element
-    let selectedNotebook = button.previousElementSibling.value; // Assuming the dropdown is before the button
+    // Get the doubt text from the <p> tag
+    let doubtText = doubtElement.querySelector("p").textContent;
 
+    // Get the selected notebook from the dropdown
+    let dropdown = doubtElement.querySelector(".notebookDropdown");
+    if (!dropdown) {
+        alert("Error: Could not find the notebook dropdown.");
+        return;
+    }
+
+    let selectedNotebook = dropdown.value;
     if (!selectedNotebook) {
         alert("Please select a notebook!");
         return;
     }
 
-    let notebookDoubts = JSON.parse(localStorage.getItem("saveddoubts")) || {};
+    // Save the doubt to the selected notebook in localStorage
+    let notebookDoubts = JSON.parse(localStorage.getItem("savedDoubts")) || {};
     if (!notebookDoubts[selectedNotebook]) {
         notebookDoubts[selectedNotebook] = [];
     }
 
     notebookDoubts[selectedNotebook].push(doubtText);
-    localStorage.setItem("saveddoubts", JSON.stringify(notebookDoubts));
+    localStorage.setItem("savedDoubts", JSON.stringify(notebookDoubts));
 
     alert(`Doubt saved to notebook: ${selectedNotebook}`);
 }
