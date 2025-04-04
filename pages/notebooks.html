@@ -33,6 +33,8 @@
     
     <div class="doubt-container">
         <ul id="notebookList" style="list-style-type: none; padding: 0;"></ul>
+        <!-- Container for displaying doubts under a notebook -->
+        <div id="notebookDoubtContainer"></div>
     </div>
     
     <script>
@@ -130,48 +132,30 @@ function addNotebookToUI(notebookName) {
     doubtContent.textContent = "No doubts added yet.";
 
     viewDoubtsButton.onclick = function() {
-        let notebookDoubts = JSON.parse(localStorage.getItem("notebookData") || "{}");
-        let doubts = notebookDoubts[notebookName] || [];
-
-        doubtContent.innerHTML = ""; // Clear previous doubts
-
-        if (doubts.length === 0) {
-            doubtContent.innerHTML = "<p>No doubts added yet.</p>";
-        } else {
-            doubts.forEach(doubt => {
-                let doubtElement = document.createElement("div");
-                doubtElement.classList.add("doubt");
-                doubtElement.innerHTML = `
-                    <p><strong>Asked by:</strong> ${doubt.username} (${doubt.role})</p>
-                    <p><strong>Subject:</strong> ${doubt.subject}</p>
-                    <p><strong>Difficulty:</strong> ${doubt.difficulty}</p>
-                    <p>${doubt.text}</p>
-                `;
-                doubtContent.appendChild(doubtElement);
-            });
-        }
-
-        // Toggle visibility
-        doubtContent.style.display = doubtContent.style.display === "none" ? "block" : "none";
+        loadNotebookDoubts(notebookName);
     };
 
     buttonContainer.appendChild(renameButton);
     buttonContainer.appendChild(deleteButton);
-    buttonContainer.appendChild(viewDoubtsButton);
     buttonContainer.appendChild(addDoubtButton);
+    buttonContainer.appendChild(viewDoubtsButton);
     li.appendChild(buttonContainer);
-    li.appendChild(doubtContent);
     notebookList.appendChild(li);
 }
 
-// Function to load doubts  for each notebook
+// Function to load doubts for each notebook
 function loadNotebookDoubts(notebookName) {
     let notebooksData = JSON.parse(localStorage.getItem("notebookData")) || {};
-
-    // Get doubts for the selected notebook
     let notebookDoubts = notebooksData[notebookName] || [];
     
     let notebookDoubtContainer = document.getElementById("notebookDoubtContainer");
+
+    // ✅ Check if the container exists before modifying it
+    if (!notebookDoubtContainer) {
+        console.error("Error: notebookDoubtContainer not found!");
+        return;
+    }
+
     notebookDoubtContainer.innerHTML = ""; // Clear previous doubts
 
     if (notebookDoubts.length === 0) {
@@ -180,7 +164,7 @@ function loadNotebookDoubts(notebookName) {
     }
 
     // Display doubts
-    notebookDoubts.forEach((doubt, index) => {
+    notebookDoubts.forEach((doubt) => {
         let doubtElement = document.createElement("div");
         doubtElement.classList.add("doubt");
         doubtElement.innerHTML = `
@@ -191,6 +175,13 @@ function loadNotebookDoubts(notebookName) {
         `;
         notebookDoubtContainer.appendChild(doubtElement);
     });
+}
+
+
+// Utility function to capitalize the first letter of a word
+function capitalizeFirstLetter(string) {
+    if (!string) return "Unknown"; // Handle empty or undefined strings
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
 function loadNotebooks() {
@@ -211,3 +202,45 @@ function loadNotebooks() {
     </script>
 </body>
 </html>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+
+    header {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container input {
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 200px;
+    }
+
+    .form-container button {
+        padding: 10px 15px;
+        background-color: #497AA6;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .doubt-container {
+        display: flex;
+        justify-content: center;
+    }
+</style>
