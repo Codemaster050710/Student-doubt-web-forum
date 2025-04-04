@@ -121,7 +121,7 @@ function addNotebookToUI(notebookName) {
     addDoubtButton.textContent = "Add Doubt";
     addDoubtButton.onclick = function() {
         localStorage.setItem("currentNotebook", notebookName);
-        window.location.href = "pages/doubts.html";
+        window.location.href = "doubts.html";
     };
 
     let viewDoubtsButton = document.createElement("button");
